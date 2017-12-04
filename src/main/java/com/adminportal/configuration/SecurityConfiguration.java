@@ -1,5 +1,9 @@
 package com.adminportal.configuration;
 
+import com.adminportal.domain.User;
+import com.adminportal.domain.security.Role;
+import com.adminportal.domain.security.UserRole;
+import com.adminportal.service.UserService;
 import com.adminportal.service.impl.UserSecurityService;
 import com.adminportal.utility.SecurityUtility;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +17,10 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+import javax.annotation.PostConstruct;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Created by User on 15.11.2017.
  */
@@ -25,6 +33,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private UserSecurityService userSecurityService;
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder(){
@@ -51,7 +61,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable().cors().disable()
                 .formLogin().failureUrl("/login?error")
-//                .defaultSuccessUrl("/")
+                .defaultSuccessUrl("/")
                 .loginPage("/login").permitAll()
                 .and()
                 .logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
@@ -63,5 +73,22 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception{
         auth.userDetailsService(userSecurityService).passwordEncoder(passwordEncoder());
+    }
+
+    @PostConstruct
+    public void createInitUser() throws Exception {
+        User user = new User();
+        user.setUsername("admin");
+        user.setFirstName("adminName");
+        user.setLastName("adminLastName");
+        user.setEmail("kiev@acoustic.ua");
+        user.setPassword(SecurityUtility.passwordEncoder().encode("admin"));
+
+        Role role = new Role();
+        role.setRoleId(2);
+        role.setName("ADMIN");
+        Set<UserRole> userRoles = new HashSet<>();
+        userRoles.add(new UserRole(user, role));
+        userService.createUser(user, userRoles);
     }
 }
