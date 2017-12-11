@@ -2,11 +2,22 @@ package com.adminportal.controller;
 
 import com.adminportal.domain.Book;
 import com.adminportal.service.BookService;
+import com.adminportal.service.impl.BookServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.List;
 
 /**
@@ -17,6 +28,7 @@ import java.util.List;
 public class BookController {
 
     private BookService bookService;
+    Logger logger = LoggerFactory.getLogger(BookController.class);
 
     @Autowired
     public BookController(BookService bookService) {
@@ -24,26 +36,53 @@ public class BookController {
     }
 
     @GetMapping("/add")
-    public String addBook(Model model){
+    public String addBook(Model model) {
         Book book = new Book();
         model.addAttribute("book", book);
         return "addBook";
     }
 
-//    @GetMapping("")
-//    public List<Book> getAllBooks() {
-//        return bookService.getAllTopics();
-//    }
-//
-//    @GetMapping("/{id}")
-//    public Book getBook(@PathVariable Long id){
-//        return bookService.getBook(id);
-//    }
+    @GetMapping("/{id}")
+    public String getBook(@PathVariable Long id, Model model) {
+        Book book = bookService.getBook(id);
+        model.addAttribute("book", book);
+        return "bookInfo";
+    }
 
-    @PostMapping("")
-    public String addBook(@RequestBody Book book){
-        bookService.addBook(book);
-        return "";
+    @PostMapping("/add")
+    public ModelAndView addBook(@ModelAttribute Book book, HttpServletRequest request) throws Exception {
+        try {
+            bookService.addBook(book);
+        } catch (Exception e) {
+            logger.info(e.getMessage());
+            throw new Exception(e.getMessage());
+        }
+        return new ModelAndView("redirect:books", HttpStatus.OK);
+    }
+
+    @GetMapping("/update")
+    public String updateBook(@RequestParam Long id, Model model) {
+        Book book = bookService.getBook(id);
+        model.addAttribute("book", book);
+        return "updateBook";
+    }
+
+    @PostMapping("/update")
+    public String updateBook(@ModelAttribute Book book, HttpServletRequest request) throws Exception {
+        try {
+            bookService.updateBook(book);
+        } catch (Exception e) {
+            logger.info(e.getMessage());
+            throw new Exception(e.getMessage());
+        }
+        return "redirect:book/" + book.getId();
+    }
+
+    @GetMapping("/books")
+    public String books(Model model) {
+        List<Book> books = bookService.getAllBooks();
+        model.addAttribute("books", books);
+        return "books";
     }
 
 //    @PutMapping("/{id}")
@@ -54,6 +93,18 @@ public class BookController {
 //    @DeleteMapping("/{id}")
 //    public void deleteBook(@PathVariable Long id){
 //        bookService.deleteBook(id);
+//    }
+
+
+    /**
+     * Exception handler
+     * @param ex exception for handling
+     * @return a {@link ModelAndView} object holding the name of jsp represented by {@code String} for error page
+     * and exception message
+     */
+//    @ExceptionHandler(Exception.class)
+//    public ModelAndView handleException(Exception ex) {
+//        return new ModelAndView("/error", "exception", ex.getMessage());
 //    }
 
 

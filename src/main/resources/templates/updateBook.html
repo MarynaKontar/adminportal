@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1000/xhtml">
+<head th:replace="common/header :: common-header"/>
+
+<body>
+<div th:replace="common/header :: navbar"/>
+
+<div class="container">
+    <div class="row">
+        <form class="form-horizontal" th:action="@{/book/update?id=}+${book.id}" method="post" enctype="multipart/form-data">
+            <fieldset>
+                <legend class="center-block">Update Book Information<span
+                        style="font-size:small"> * is a required field</span></legend>
+
+                <input hidden="hidden" name="id" th:value="${book.id}"/>
+
+                <div th:replace="common/bookFields :: bookFields"/>
+
+                <div class="form-group">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-8">
+                        <button type="submit" class="btn btn-success">Update Book</button>
+                        <a class="btn btn-danger"
+                           th:href="@{/book/{id}(id=${book.id})}">Cancel</a>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</div>
+
+<div th:replace="common/header :: body-bottom-scripts"/>
+</body>
+</html>

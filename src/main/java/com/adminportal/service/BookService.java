@@ -12,7 +12,7 @@ public interface BookService {
 
     Book getBook(Long id);
     List<Book> getAllBooks();
-    void addBook(Book book);
-    void updateBook(Book book, Long id);
+    void addBook(Book book) throws Exception;
+    void updateBook(Book book) throws Exception;
     void deleteBook(Long id);
 }

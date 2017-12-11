@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1000/xhtml">
+<head th:replace="common/header :: common-header"/>
+
+<body>
+<div th:replace="common/header :: navbar"/>
+<div class="container">
+    <div class="table-responsive">
+        <table id="booksTable" class="table table-boarded table-hover table-striped">
+            <thread>
+                <tr>
+                    <th>id</th>
+                    <th></th>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Category</th>
+                    <th>List Price</th>
+                    <th>Our Price</th>
+                    <th>Active?</th>
+                    <th>Publisher</th>
+                    <th>Publication Date</th>
+                    <th>Language</th>
+                    <th>Pages</th>
+                    <th>Format</th>
+                    <th>ISBN</th>
+                    <th>Shipping Weight</th>
+                    <th>Description</th>
+                    <th>In Stock Number</th>
+                    <th>Edit</th>
+                    <th>Delete</th>
+                </tr>
+            </thread>
+            <tbody>
+            <tr data-th-each="book : ${books}">
+                <td th:text="${book.id}"></td>
+                <td>
+                    <img th:src="@{/image/book/{id}.png(id=${book.id})}" class="img-responsive" style="width: 50px;"/>
+                    <!--"@{/users/{id}/profile(id=${user.id})}"-->
+                </td>
+                <a th:href="@{/book/{id}(id=${book.id})}"><td th:text="${book.title}"><span th:text="$book.title"></span></td></a>
+                <td th:text="${book.author}"></td>
+                <td th:text="${book.category}"></td>
+                <td th:text="${book.listPrice}"></td>
+                <td th:text="${book.ourPrice}"></td>
+                <td th:text="${book.active}"></td>
+                <td th:text="${book.publisher}"></td>
+                <td th:text="${book.publicationDate}"></td>
+                <td th:text="${book.language}"></td>
+                <td th:text="${book.numberOfPages}"></td>
+                <td th:text="${book.format}"></td>
+                <td th:text="${book.isbn}"></td>
+                <td th:text="${book.shippingWeight}"></td>
+                <td th:text="${book.description}"></td>
+                <td th:text="${book.inStockNumber}"></td>
+                <td><a th:href="@{/book/update?id=}+${book.id}">Edit</a></td>
+                <td>delete</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<div th:replace="common/header :: body-bottom-scripts"/>
+</body>
+</html>
